@@ -1,0 +1,1560 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="warm">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>RoboScript</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            /* Warm Nordic Sand Palette (Default) */
+            --bg: #F5F3EF;
+            --surface: #FFFFFF;
+            --surface-subtle: #ECE9E2;
+            --surface-hover: #E4E0D7;
+            --surface-pressed: #DDD8CD;
+
+            --ink-primary: #1C1B19;
+            --ink-secondary: rgba(28, 27, 25, 0.65);
+            --ink-tertiary: rgba(28, 27, 25, 0.44);
+            --ink-disabled: rgba(28, 27, 25, 0.28);
+
+            --border: rgba(28, 27, 25, 0.09);
+            --border-medium: rgba(28, 27, 25, 0.16);
+            --border-strong: rgba(28, 27, 25, 0.88);
+
+            --grid-line: rgba(28, 27, 25, 0.055);
+            --grid-axis: rgba(28, 27, 25, 0.14);
+            --sim-bg: #FCFBF9;
+
+            --status-success-ink: #0F766E;
+            --status-success-bg: rgba(15, 118, 110, 0.09);
+            --status-success-border: rgba(15, 118, 110, 0.22);
+
+            --status-running-ink: #B45309;
+            --status-running-bg: rgba(180, 83, 9, 0.09);
+            --status-running-border: rgba(180, 83, 9, 0.22);
+
+            --status-error-ink: #BE123C;
+            --status-error-bg: rgba(190, 18, 60, 0.09);
+            --status-error-border: rgba(190, 18, 60, 0.22);
+
+            --radius-sm: 4px;
+            --radius-md: 6px;
+            --radius-lg: 8px;
+            --radius-pill: 9999px;
+
+            --shadow-subtle: 0 1px 3px rgba(0, 0, 0, 0.03), 0 1px 2px rgba(0, 0, 0, 0.02);
+
+            --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+        }
+
+        [data-theme="dark"] {
+            --bg: #0E1015;
+            --surface: #15181F;
+            --surface-subtle: #1C2029;
+            --surface-hover: #242935;
+            --surface-pressed: #2C3240;
+
+            --ink-primary: #EDEDED;
+            --ink-secondary: rgba(237, 237, 237, 0.62);
+            --ink-tertiary: rgba(237, 237, 237, 0.42);
+            --ink-disabled: rgba(237, 237, 237, 0.25);
+
+            --border: rgba(255, 255, 255, 0.09);
+            --border-medium: rgba(255, 255, 255, 0.16);
+            --border-strong: rgba(255, 255, 255, 0.88);
+
+            --grid-line: rgba(255, 255, 255, 0.05);
+            --grid-axis: rgba(255, 255, 255, 0.15);
+            --sim-bg: #121419;
+
+            --status-success-ink: #34D399;
+            --status-success-bg: rgba(52, 211, 153, 0.12);
+            --status-success-border: rgba(52, 211, 153, 0.25);
+
+            --status-running-ink: #FBBF24;
+            --status-running-bg: rgba(251, 191, 36, 0.12);
+            --status-running-border: rgba(251, 191, 36, 0.25);
+
+            --status-error-ink: #FB7185;
+            --status-error-bg: rgba(251, 113, 133, 0.12);
+            --status-error-border: rgba(251, 113, 133, 0.25);
+        }
+
+        [data-theme="light"] {
+            --bg: #F8F9FA;
+            --surface: #FFFFFF;
+            --surface-subtle: #F1F3F5;
+            --surface-hover: #E9ECEF;
+            --surface-pressed: #DEE2E6;
+
+            --ink-primary: #111827;
+            --ink-secondary: rgba(17, 24, 39, 0.65);
+            --ink-tertiary: rgba(17, 24, 39, 0.44);
+            --ink-disabled: rgba(17, 24, 39, 0.28);
+
+            --border: rgba(0, 0, 0, 0.08);
+            --border-medium: rgba(0, 0, 0, 0.15);
+            --border-strong: rgba(0, 0, 0, 0.88);
+
+            --grid-line: rgba(0, 0, 0, 0.05);
+            --grid-axis: rgba(0, 0, 0, 0.13);
+            --sim-bg: #FCFCFE;
+
+            --status-success-ink: #059669;
+            --status-success-bg: rgba(5, 150, 105, 0.09);
+            --status-success-border: rgba(5, 150, 105, 0.22);
+
+            --status-running-ink: #D97706;
+            --status-running-bg: rgba(217, 119, 6, 0.09);
+            --status-running-border: rgba(217, 119, 6, 0.22);
+
+            --status-error-ink: #DC2626;
+            --status-error-bg: rgba(220, 38, 38, 0.09);
+            --status-error-border: rgba(220, 38, 38, 0.22);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--ink-primary);
+            font-family: var(--font-sans);
+            font-size: 14px;
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            padding: 20px 24px 36px 24px;
+            min-height: 100vh;
+            transition: background-color 0.2s ease, color 0.2s ease;
+        }
+
+        .mono {
+            font-family: var(--font-mono);
+        }
+
+        /* ---------- APP WRAPPER & TIGHT HEADER ---------- */
+        .app-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+            padding: 0;
+            margin-bottom: 2px;
+            border-bottom: none;
+        }
+
+        .brand-text h1 {
+            font-size: 20px;
+            font-weight: 600;
+            letter-spacing: -0.025em;
+            color: var(--ink-primary);
+            line-height: 1;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        /* ---------- BUTTONS & CONTROLS ---------- */
+        button,
+        .btn {
+            font-family: var(--font-sans);
+            font-size: 13px;
+            font-weight: 500;
+            line-height: 1;
+            padding: 7px 13px;
+            border: 1px solid var(--border-medium);
+            border-radius: var(--radius-md);
+            background: var(--surface);
+            color: var(--ink-primary);
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            transition: background-color 0.12s ease, border-color 0.12s ease, transform 0.08s ease, color 0.12s ease;
+            user-select: none;
+            text-decoration: none;
+            white-space: nowrap;
+        }
+
+        button:hover:not(:disabled) {
+            background: var(--surface-hover);
+            border-color: var(--border-medium);
+        }
+
+        button:active:not(:disabled) {
+            background: var(--surface-pressed);
+            transform: scale(0.985);
+        }
+
+        button:focus-visible,
+        select:focus-visible,
+        textarea:focus-visible {
+            outline: 2px solid var(--ink-primary);
+            outline-offset: 1px;
+        }
+
+        button:disabled {
+            opacity: 0.45;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        button.btn-primary {
+            background: var(--ink-primary);
+            color: var(--bg);
+            border-color: var(--ink-primary);
+            font-weight: 500;
+        }
+
+        [data-theme="dark"] button.btn-primary {
+            background: #EDEDED;
+            color: #0E1015;
+            border-color: #EDEDED;
+        }
+
+        button.btn-primary:hover:not(:disabled) {
+            opacity: 0.90;
+        }
+
+        button.btn-ghost {
+            background: transparent;
+            border-color: transparent;
+            color: var(--ink-secondary);
+            padding: 6px 9px;
+            font-size: 12.5px;
+        }
+
+        button.btn-ghost:hover:not(:disabled) {
+            background: var(--surface-hover);
+            color: var(--ink-primary);
+        }
+
+        .select-wrap {
+            position: relative;
+            display: inline-block;
+        }
+
+        select {
+            font-family: var(--font-sans);
+            font-size: 12.5px;
+            font-weight: 500;
+            padding: 7px 28px 7px 11px;
+            border: 1px solid var(--border-medium);
+            border-radius: var(--radius-md);
+            background: var(--surface);
+            color: var(--ink-primary);
+            cursor: pointer;
+            outline: none;
+            appearance: none;
+            -webkit-appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11' height='11' viewBox='0 0 24 24' fill='none' stroke='%23888888' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 9px center;
+            transition: border-color 0.12s ease;
+        }
+
+        select:hover {
+            border-color: var(--ink-tertiary);
+        }
+
+        /* ---------- STATUS BADGES ---------- */
+        .badge {
+            font-family: var(--font-mono);
+            font-size: 11px;
+            font-weight: 500;
+            letter-spacing: 0.02em;
+            padding: 3px 8px;
+            border-radius: var(--radius-pill);
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            line-height: 1.2;
+            border: 1px solid transparent;
+        }
+
+        .badge::before {
+            content: "";
+            display: inline-block;
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+        }
+
+        .badge-idle {
+            background: var(--surface-subtle);
+            color: var(--ink-secondary);
+            border-color: var(--border);
+        }
+
+        .badge-idle::before {
+            background: var(--ink-tertiary);
+        }
+
+        .badge-active {
+            background: var(--status-running-bg);
+            color: var(--status-running-ink);
+            border-color: var(--status-running-border);
+        }
+
+        .badge-active::before {
+            background: var(--status-running-ink);
+        }
+
+        .badge-done {
+            background: var(--status-success-bg);
+            color: var(--status-success-ink);
+            border-color: var(--status-success-border);
+        }
+
+        .badge-done::before {
+            background: var(--status-success-ink);
+        }
+
+        .badge-error {
+            background: var(--status-error-bg);
+            color: var(--status-error-ink);
+            border-color: var(--status-error-border);
+        }
+
+        .badge-error::before {
+            background: var(--status-error-ink);
+        }
+
+        /* ---------- CARDS ---------- */
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-subtle);
+            overflow: hidden;
+        }
+
+        .card-util-bar {
+            padding: 8px 14px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--surface);
+            min-height: 40px;
+        }
+
+        .card-meta {
+            font-size: 12px;
+            color: var(--ink-tertiary);
+            font-family: var(--font-mono);
+        }
+
+        /* ---------- TOP ROW: LEFT CODE SPACE, RIGHT SIMULATOR & LOG ---------- */
+        .main-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+            align-items: stretch;
+        }
+
+        @media (max-width: 960px) {
+            .main-row {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Code Space Container */
+        .editor-card {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .editor-wrap {
+            position: relative;
+            background: var(--surface);
+            display: flex;
+            flex: 1;
+            min-height: 310px;
+        }
+
+        .line-numbers {
+            width: 38px;
+            padding: 12px 8px 12px 0;
+            text-align: right;
+            font-family: var(--font-mono);
+            font-size: 13px;
+            color: var(--ink-tertiary);
+            background: var(--surface-subtle);
+            border-right: 1px solid var(--border);
+            user-select: none;
+            line-height: 1.6;
+        }
+
+        #editor {
+            flex: 1;
+            height: 100%;
+            min-height: 310px;
+            background: transparent;
+            color: var(--ink-primary);
+            border: none;
+            resize: vertical;
+            font-family: var(--font-mono);
+            font-size: 13px;
+            font-weight: 400;
+            padding: 12px 14px;
+            outline: none;
+            line-height: 1.6;
+            tab-size: 2;
+            white-space: pre;
+        }
+
+        .editor-footer {
+            padding: 10px 14px;
+            border-top: 1px solid var(--border);
+            background: var(--surface);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* Right Rover Simulator & Log Container */
+        .sim-card {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sim-log-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            flex: 1;
+            min-height: 310px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        @media (max-width: 600px) {
+            .sim-log-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .sim-canvas-area {
+            padding: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--surface);
+            border-right: 1px solid var(--border);
+        }
+
+        #simSvg {
+            width: 100%;
+            max-width: 250px;
+            height: auto;
+            aspect-ratio: 1 / 1;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            background: var(--sim-bg);
+        }
+
+        .grid-line {
+            stroke: var(--grid-line);
+            stroke-width: 1;
+        }
+
+        .grid-axis {
+            stroke: var(--grid-axis);
+            stroke-dasharray: 2 3;
+            stroke-width: 1;
+        }
+
+        .trail {
+            fill: none;
+            stroke: var(--ink-primary);
+            stroke-width: 2.2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            opacity: 0.88;
+        }
+
+        .rover {
+            fill: var(--ink-primary);
+            stroke: var(--surface);
+            stroke-width: 1.5;
+        }
+
+        #log {
+            height: 100%;
+            min-height: 290px;
+            max-height: 340px;
+            overflow-y: auto;
+            padding: 12px 14px;
+            background: var(--surface);
+            font-family: var(--font-mono);
+            font-size: 12px;
+            line-height: 1.55;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .log-entry {
+            display: flex;
+            gap: 8px;
+            word-break: break-word;
+            align-items: baseline;
+        }
+
+        .log-tag {
+            font-family: var(--font-mono);
+            font-weight: 500;
+            padding: 1px 5px;
+            border-radius: var(--radius-sm);
+            font-size: 10px;
+            letter-spacing: 0.02em;
+            align-self: flex-start;
+            flex-shrink: 0;
+            border: 1px solid var(--border);
+            background: var(--surface-subtle);
+            color: var(--ink-secondary);
+        }
+
+        .tag-lex {
+            color: #4B5563;
+            background: var(--surface-subtle);
+        }
+
+        .tag-parse {
+            color: #2563EB;
+            background: rgba(37, 99, 235, 0.08);
+            border-color: rgba(37, 99, 235, 0.18);
+        }
+
+        .tag-codegen {
+            color: #7C3AED;
+            background: rgba(124, 58, 237, 0.08);
+            border-color: rgba(124, 58, 237, 0.18);
+        }
+
+        .tag-tx {
+            color: #059669;
+            background: rgba(5, 150, 105, 0.08);
+            border-color: rgba(5, 150, 105, 0.18);
+        }
+
+        .tag-rx {
+            color: #D97706;
+            background: rgba(217, 119, 6, 0.08);
+            border-color: rgba(217, 119, 6, 0.18);
+        }
+
+        .tag-err {
+            color: #DC2626;
+            background: rgba(220, 38, 38, 0.08);
+            border-color: rgba(220, 38, 38, 0.18);
+        }
+
+        .tag-info {
+            color: var(--ink-secondary);
+        }
+
+        .log-text {
+            flex: 1;
+            color: var(--ink-primary);
+        }
+
+        .log-err-text {
+            color: var(--status-error-ink);
+            font-weight: 500;
+        }
+
+        /* ---------- BOTTOM ROW: COMPACT COMMANDS (LEFT) & MATCHED HEIGHT PIPELINE (RIGHT) ---------- */
+        .bottom-row {
+            display: grid;
+            grid-template-columns: 290px 1fr;
+            gap: 14px;
+            align-items: stretch;
+        }
+
+        @media (max-width: 980px) {
+            .bottom-row {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Compact commands box */
+        .commands-card {
+            padding: 10px 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            justify-content: space-between;
+        }
+
+        .cmd-chip {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 5px 8px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            background: var(--surface);
+            gap: 8px;
+            transition: background-color 0.12s ease;
+        }
+
+        .cmd-chip:hover {
+            background: var(--surface-subtle);
+        }
+
+        .cmd-code {
+            font-family: var(--font-mono);
+            font-weight: 500;
+            font-size: 11.5px;
+            background: var(--surface-subtle);
+            color: var(--ink-primary);
+            padding: 2px 5px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            white-space: nowrap;
+        }
+
+        .cmd-desc {
+            font-size: 11px;
+            color: var(--ink-secondary);
+            flex: 1;
+        }
+
+        .cmd-add-btn {
+            font-size: 11px;
+            padding: 3px 6px;
+            color: var(--ink-secondary);
+            border-color: var(--border);
+            border-radius: var(--radius-sm);
+        }
+
+        .cmd-add-btn:hover {
+            color: var(--ink-primary);
+            border-color: var(--border-medium);
+        }
+
+        /* Compiler Pipeline */
+        .pipeline-card {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .pipeline-top-bar {
+            padding: 12px 14px 4px 14px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .pipeline-meta-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .phases-horizontal {
+            padding: 8px 14px 12px 14px;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            flex: 1;
+        }
+
+        @media (max-width: 760px) {
+            .phases-horizontal {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .phase-item {
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            background: var(--surface);
+            padding: 8px 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+            transition: border-color 0.15s ease, background-color 0.15s ease;
+        }
+
+        .phase-item.phase-active {
+            border-color: var(--status-running-border);
+            background: var(--surface-subtle);
+        }
+
+        .phase-item.phase-done {
+            border-color: var(--border);
+            background: var(--surface);
+        }
+
+        .phase-item.phase-error {
+            border-color: var(--status-error-border);
+            background: var(--status-error-bg);
+        }
+
+        .phase-head {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .phase-name {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--ink-primary);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .phase-index {
+            font-family: var(--font-mono);
+            font-size: 10.5px;
+            font-weight: 500;
+            color: var(--ink-tertiary);
+        }
+
+        .phase-desc {
+            font-size: 11px;
+            color: var(--ink-secondary);
+            line-height: 1.35;
+        }
+
+        .phase-output {
+            margin-top: 6px;
+            padding: 6px 8px;
+            background: var(--surface-subtle);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            font-family: var(--font-mono);
+            font-size: 10.5px;
+            color: var(--ink-primary);
+            max-height: 70px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            word-break: break-word;
+            line-height: 1.4;
+            display: none;
+        }
+
+        .phase-item.has-output .phase-output {
+            display: block;
+        }
+
+        .editor-controls-bar {
+            padding: 6px 14px;
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--surface);
+            min-height: 38px;
+        }
+
+        .icon-btn {
+            padding: 6px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: var(--radius-md);
+            color: var(--ink-secondary);
+            line-height: 1;
+        }
+
+        .icon-btn:hover {
+            color: var(--ink-primary);
+            background: var(--surface-hover);
+        }
+
+        /* Custom subtle scrollbar */
+        ::-webkit-scrollbar {
+            width: 5px;
+            height: 5px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(128, 128, 128, 0.2);
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(128, 128, 128, 0.35);
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="app-container">
+
+        <!-- Top Header -->
+        <header>
+            <div class="brand-text">
+                <h1>RoboScript</h1>
+            </div>
+
+            <div class="header-actions">
+                <div class="select-wrap">
+                    <select id="presets" title="Select Sample Program">
+                        <option value="repeatSquare">Preset: Repeat Square</option>
+                        <option value="square">Preset: Plain Square</option>
+                        <option value="zigzag">Preset: Zigzag Path</option>
+                        <option value="spiral">Preset: Nested Pattern</option>
+                        <option value="errorDemo">Preset: Syntax Error</option>
+                    </select>
+                </div>
+
+                <button id="loadPresetBtn">Load</button>
+
+                <!-- NEW: Connect Car Button -->
+                <button id="connectBtBtn" class="btn-primary"
+                    style="background: #059669; border-color: #059669;">Connect Car</button>
+
+                <div class="select-wrap">
+                    <select id="themeSelector" title="Select Theme Palette">
+                        <option value="warm">Warm Sand</option>
+                        <option value="light">Crisp Light</option>
+                        <option value="dark">Nordic Dark</option>
+                    </select>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Upper Section: Left Code Space, Right Rover Simulator & Log -->
+        <section class="main-row">
+
+            <!-- LEFT: Code Space -->
+            <div class="card editor-card">
+                <div class="editor-wrap">
+                    <div class="line-numbers" id="lineNumbers">1</div>
+                    <textarea id="editor" spellcheck="false"
+                        placeholder="// Type RoboScript commands here..."></textarea>
+                </div>
+                <!-- Controls toolbar under code space, above compile button -->
+                <div class="editor-controls-bar">
+                    <span class="card-meta" id="charCount">0 chars</span>
+                    <div style="display: flex; align-items: center; gap: 6px;">
+                        <button class="btn-ghost icon-btn" id="clearBtn" title="Clear Editor" aria-label="Clear Editor">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="3 6 5 6 21 6"></polyline>
+                                <path
+                                    d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2">
+                                </path>
+                            </svg>
+                        </button>
+                        <button class="btn-ghost" id="resetRoverBtn">Reset Rover</button>
+                    </div>
+                </div>
+                <div class="editor-footer">
+                    <button class="btn-primary" id="compileBtn" style="width: 100%;">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
+                            <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                        </svg>
+                        Compile &amp; Run
+                    </button>
+                </div>
+            </div>
+
+            <!-- RIGHT: Rover Simulator Canvas & Execution Log -->
+            <div class="card sim-card">
+                <div class="card-util-bar">
+                    <span class="card-meta" id="posLabel">X: 0 | Y: 0 | 0°</span>
+                    <button class="btn-ghost" id="clearLogBtn">Clear Log</button>
+                </div>
+                <div class="sim-log-grid">
+                    <div class="sim-canvas-area">
+                        <svg id="simSvg" viewBox="0 0 320 320"></svg>
+                    </div>
+                    <div id="log"></div>
+                </div>
+            </div>
+
+        </section>
+
+        <!-- Bottom Section: Compact Commands (Left) & Horizontal Pipeline (Right) -->
+        <section class="bottom-row">
+
+            <!-- Small Left Commands Box -->
+            <div class="card commands-card">
+                <div class="cmd-chip">
+                    <code class="cmd-code">MOVE n</code>
+                    <span class="cmd-desc">Forward n</span>
+                    <button class="cmd-add-btn" onclick="insertCode('MOVE 5\n')">+ Add</button>
+                </div>
+                <div class="cmd-chip">
+                    <code class="cmd-code">BACK n</code>
+                    <span class="cmd-desc">Backward n</span>
+                    <button class="cmd-add-btn" onclick="insertCode('BACK 3\n')">+ Add</button>
+                </div>
+                <div class="cmd-chip">
+                    <code class="cmd-code">LEFT deg</code>
+                    <span class="cmd-desc">Turn left</span>
+                    <button class="cmd-add-btn" onclick="insertCode('LEFT 90\n')">+ Add</button>
+                </div>
+                <div class="cmd-chip">
+                    <code class="cmd-code">RIGHT deg</code>
+                    <span class="cmd-desc">Turn right</span>
+                    <button class="cmd-add-btn" onclick="insertCode('RIGHT 90\n')">+ Add</button>
+                </div>
+                <div class="cmd-chip">
+                    <code class="cmd-code">REPEAT n { }</code>
+                    <span class="cmd-desc">Repeat loop</span>
+                    <button class="cmd-add-btn" onclick="insertCode('REPEAT 4 {\n  MOVE 5\n  RIGHT 90\n}\n')">+
+                        Add</button>
+                </div>
+            </div>
+
+            <!-- Compiler Pipeline -->
+            <div class="card pipeline-card">
+                <div class="pipeline-top-bar">
+                    <div class="pipeline-meta-row">
+                        <span class="card-meta">Compiler Pipeline</span>
+                        <span class="badge badge-idle" id="pipelineStatus">Idle</span>
+                    </div>
+                </div>
+
+                <div class="phases-horizontal">
+                    <!-- Phase 1: Lex -->
+                    <div class="phase-item" id="phase-lex" data-stage="lex">
+                        <div class="phase-head">
+                            <span class="phase-name">
+                                <span class="phase-index">01</span>
+                                Lexical
+                            </span>
+                            <span class="badge badge-idle" id="badge-lex">Wait</span>
+                        </div>
+                        <p class="phase-desc">Tokenizes source</p>
+                        <div class="phase-output" id="output-lex"></div>
+                    </div>
+
+                    <!-- Phase 2: Parse -->
+                    <div class="phase-item" id="phase-parse" data-stage="parse">
+                        <div class="phase-head">
+                            <span class="phase-name">
+                                <span class="phase-index">02</span>
+                                Parser
+                            </span>
+                            <span class="badge badge-idle" id="badge-parse">Wait</span>
+                        </div>
+                        <p class="phase-desc">Builds AST</p>
+                        <div class="phase-output" id="output-parse"></div>
+                    </div>
+
+                    <!-- Phase 3: Codegen -->
+                    <div class="phase-item" id="phase-codegen" data-stage="codegen">
+                        <div class="phase-head">
+                            <span class="phase-name">
+                                <span class="phase-index">03</span>
+                                Codegen
+                            </span>
+                            <span class="badge badge-idle" id="badge-codegen">Wait</span>
+                        </div>
+                        <p class="phase-desc">Synthesizes opcodes</p>
+                        <div class="phase-output" id="output-codegen"></div>
+                    </div>
+
+                    <!-- Phase 4: Execution -->
+                    <div class="phase-item" id="phase-exec" data-stage="exec">
+                        <div class="phase-head">
+                            <span class="phase-name">
+                                <span class="phase-index">04</span>
+                                Execution
+                            </span>
+                            <span class="badge badge-idle" id="badge-exec">Wait</span>
+                        </div>
+                        <p class="phase-desc">Transmits &amp; runs</p>
+                        <div class="phase-output" id="output-exec"></div>
+                    </div>
+                </div>
+            </div>
+
+        </section>
+
+    </div>
+
+    <script>
+        // NEW: Global variable for Web Serial
+        let serialWriter;
+
+        // ============================================================
+        // THEME MANAGER
+        // ============================================================
+        const themeSelector = document.getElementById('themeSelector');
+        themeSelector.addEventListener('change', (e) => {
+            document.documentElement.setAttribute('data-theme', e.target.value);
+            localStorage.setItem('roboscript-theme', e.target.value);
+        });
+
+        const savedTheme = localStorage.getItem('roboscript-theme') || 'warm';
+        document.documentElement.setAttribute('data-theme', savedTheme);
+        themeSelector.value = savedTheme;
+
+        // ============================================================
+        // LEXER
+        // ============================================================
+        function lex(src) {
+            const tokens = [];
+            const cleanSrc = src.replace(/\/\/.*$/gm, '').replace(/#.*$/gm, '');
+            const re = /\{|\}|[A-Za-z_]+|-?\d+/g;
+            let m;
+            while ((m = re.exec(cleanSrc)) !== null) {
+                const raw = m[0];
+                if (raw === '{') {
+                    tokens.push({ type: 'LBRACE', value: '{' });
+                } else if (raw === '}') {
+                    tokens.push({ type: 'RBRACE', value: '}' });
+                } else if (/^-?\d+$/.test(raw)) {
+                    tokens.push({ type: 'INT', value: parseInt(raw, 10) });
+                } else {
+                    const kw = raw.toUpperCase();
+                    if (['MOVE', 'BACK', 'LEFT', 'RIGHT', 'REPEAT'].includes(kw)) {
+                        tokens.push({ type: 'CMD_' + kw, value: kw });
+                    } else {
+                        throw new Error(`Unknown token '${raw}' at position ${m.index}`);
+                    }
+                }
+            }
+            tokens.push({ type: 'EOF', value: 'EOF' });
+            return tokens;
+        }
+
+        // ============================================================
+        // PARSER
+        // ============================================================
+        function parse(tokens) {
+            let pos = 0;
+            const peek = () => tokens[pos];
+            const next = () => tokens[pos++];
+
+            function parseProgram(terminator) {
+                const stmts = [];
+                while (peek().type !== 'EOF' && peek().type !== terminator) {
+                    stmts.push(parseStatement());
+                }
+                return stmts;
+            }
+
+            function expectInt(cmdName) {
+                const t = next();
+                if (!t || t.type !== 'INT') {
+                    throw new Error(`Expected number parameter for '${cmdName}', got '${t ? t.value : 'end of input'}'`);
+                }
+                return t.value;
+            }
+
+            function parseStatement() {
+                const t = next();
+                switch (t.type) {
+                    case 'CMD_MOVE': return { type: 'MOVE', value: expectInt('MOVE') };
+                    case 'CMD_BACK': return { type: 'BACK', value: expectInt('BACK') };
+                    case 'CMD_LEFT': return { type: 'LEFT', value: expectInt('LEFT') };
+                    case 'CMD_RIGHT': return { type: 'RIGHT', value: expectInt('RIGHT') };
+                    case 'CMD_REPEAT': {
+                        const count = expectInt('REPEAT');
+                        const open = next();
+                        if (!open || open.type !== 'LBRACE') throw new Error(`Expected '{' after 'REPEAT ${count}'`);
+                        const body = parseProgram('RBRACE');
+                        const close = next();
+                        if (!close || close.type !== 'RBRACE') throw new Error(`Missing closing '}' for REPEAT block`);
+                        return { type: 'REPEAT', count, body };
+                    }
+                    default:
+                        throw new Error(`Unexpected token '${t.value || t.type}'`);
+                }
+            }
+
+            return parseProgram('EOF');
+        }
+
+        // ============================================================
+        // CODEGEN (Opcode synthesis)
+        // ============================================================
+        function pad(n, width) { return String(Math.abs(n)).padStart(width, '0'); }
+
+        function codegen(ast) {
+            const out = [];
+            for (const node of ast) {
+                switch (node.type) {
+                    case 'MOVE': out.push('F' + pad(node.value, 2)); break;
+                    case 'BACK': out.push('B' + pad(node.value, 2)); break;
+                    case 'LEFT': out.push('L' + pad(node.value, 3)); break;
+                    case 'RIGHT': out.push('R' + pad(node.value, 3)); break;
+                    case 'REPEAT': {
+                        const inner = codegen(node.body);
+                        for (let i = 0; i < node.count; i++) {
+                            out.push(...inner);
+                        }
+                        break;
+                    }
+                }
+            }
+            return out;
+        }
+
+        // ============================================================
+        // PRESETS
+        // ============================================================
+        const presets = {
+            repeatSquare: `// Draw a square using REPEAT loop\nREPEAT 4 {\n  MOVE 5\n  RIGHT 90\n}`,
+            square: `// Square with individual moves\nMOVE 5\nRIGHT 90\nMOVE 5\nRIGHT 90\nMOVE 5\nRIGHT 90\nMOVE 5\nRIGHT 90`,
+            zigzag: `// Zigzag movement path\nMOVE 3\nRIGHT 45\nMOVE 3\nLEFT 90\nMOVE 3\nRIGHT 90\nMOVE 3`,
+            spiral: `// Nested box pattern\nREPEAT 3 {\n  MOVE 4\n  RIGHT 90\n  MOVE 2\n  RIGHT 90\n}`,
+            errorDemo: `// Intentional syntax error\nMOVE 5\nMOVE LEFT\nRIGHT 90`
+        };
+
+        // ============================================================
+        // DOM ELEMENTS & INITIALIZATION
+        // ============================================================
+        const editor = document.getElementById('editor');
+        const lineNumbers = document.getElementById('lineNumbers');
+        const charCount = document.getElementById('charCount');
+        const logEl = document.getElementById('log');
+        const globalStatus = document.getElementById('globalStatus');
+        const pipelineStatus = document.getElementById('pipelineStatus');
+        const progressBar = document.getElementById('progressBar');
+        const compileBtn = document.getElementById('compileBtn');
+        const posLabel = document.getElementById('posLabel');
+
+        // Initialize with default preset
+        editor.value = presets.repeatSquare;
+        updateEditorMetrics();
+
+        function updateEditorMetrics() {
+            charCount.textContent = editor.value.length + ' chars';
+            const lines = editor.value.split('\n').length;
+            lineNumbers.innerHTML = Array.from({ length: lines }, (_, i) => i + 1).join('<br>');
+        }
+
+        editor.addEventListener('input', updateEditorMetrics);
+        editor.addEventListener('scroll', () => {
+            lineNumbers.scrollTop = editor.scrollTop;
+        });
+
+        // Tab key handler for clean indenting
+        editor.addEventListener('keydown', function (e) {
+            if (e.key === 'Tab') {
+                e.preventDefault();
+                const start = this.selectionStart;
+                const end = this.selectionEnd;
+                this.value = this.value.substring(0, start) + '  ' + this.value.substring(end);
+                this.selectionStart = this.selectionEnd = start + 2;
+                updateEditorMetrics();
+            }
+        });
+
+        // Load Preset
+        document.getElementById('loadPresetBtn').addEventListener('click', () => {
+            const key = document.getElementById('presets').value;
+            editor.value = presets[key] || '';
+            updateEditorMetrics();
+            logEntry('info', `Loaded preset: ${key}`);
+        });
+
+        // Clear Editor
+        document.getElementById('clearBtn').addEventListener('click', () => {
+            editor.value = '';
+            updateEditorMetrics();
+            editor.focus();
+        });
+
+        // Clear Log
+        document.getElementById('clearLogBtn').addEventListener('click', () => {
+            logEl.innerHTML = '';
+        });
+
+        // Insert code helper from commands box
+        window.insertCode = function (snippet) {
+            const start = editor.selectionStart;
+            const end = editor.selectionEnd;
+            const text = editor.value;
+            editor.value = text.substring(0, start) + snippet + text.substring(end);
+            editor.selectionStart = editor.selectionEnd = start + snippet.length;
+            updateEditorMetrics();
+            editor.focus();
+        };
+
+        // ============================================================
+        // LOGGING SYSTEM
+        // ============================================================
+        function logEntry(tag, text, isError = false) {
+            const row = document.createElement('div');
+            row.className = 'log-entry';
+
+            const tagEl = document.createElement('span');
+            tagEl.className = 'log-tag tag-' + tag.toLowerCase();
+            tagEl.textContent = tag.toUpperCase();
+
+            const textEl = document.createElement('span');
+            textEl.className = 'log-text' + (isError ? ' log-err-text' : '');
+            textEl.textContent = text;
+
+            row.appendChild(tagEl);
+            row.appendChild(textEl);
+            logEl.appendChild(row);
+            logEl.scrollTop = logEl.scrollHeight;
+        }
+
+        function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+        // ============================================================
+        // COMPILER PHASE UI MANAGER
+        // ============================================================
+        const phases = ['lex', 'parse', 'codegen', 'exec'];
+
+        function resetPhases() {
+            if (progressBar) progressBar.style.width = '0%';
+            pipelineStatus.textContent = 'Idle';
+            pipelineStatus.className = 'badge badge-idle';
+            phases.forEach(p => {
+                const el = document.getElementById('phase-' + p);
+                const badge = document.getElementById('badge-' + p);
+                const out = document.getElementById('output-' + p);
+                el.className = 'phase-item';
+                badge.className = 'badge badge-idle';
+                badge.textContent = 'Wait';
+                out.textContent = '';
+            });
+        }
+
+        function setPhaseState(pName, state, text = '') {
+            const el = document.getElementById('phase-' + pName);
+            const badge = document.getElementById('badge-' + pName);
+            const out = document.getElementById('output-' + pName);
+
+            el.className = 'phase-item';
+
+            if (state === 'active') {
+                el.classList.add('phase-active');
+                badge.className = 'badge badge-active';
+                badge.textContent = 'Running';
+            } else if (state === 'done') {
+                el.classList.add('phase-done');
+                badge.className = 'badge badge-done';
+                badge.textContent = 'Done';
+                if (text) {
+                    el.classList.add('has-output');
+                    out.textContent = text;
+                }
+            } else if (state === 'error') {
+                el.classList.add('phase-error');
+                badge.className = 'badge badge-error';
+                badge.textContent = 'Failed';
+                if (text) {
+                    el.classList.add('has-output');
+                    out.textContent = text;
+                }
+            }
+        }
+
+        // ============================================================
+        // SIMULATOR (SVG Grid & Rover)
+        // ============================================================
+        const svgNS = 'http://www.w3.org/2000/svg';
+        const simSvg = document.getElementById('simSvg');
+        const STEP_PX = 18;
+        const CENTER = { x: 160, y: 160 };
+        let rover = { x: CENTER.x, y: CENTER.y, heading: 0 };
+        let trailPoints = [];
+
+        function initGrid() {
+            simSvg.innerHTML = '';
+            // Draw subtle grid lines
+            for (let i = 0; i <= 320; i += 20) {
+                const isCenter = (i === 160);
+                const vLine = document.createElementNS(svgNS, 'line');
+                vLine.setAttribute('x1', i); vLine.setAttribute('y1', 0);
+                vLine.setAttribute('x2', i); vLine.setAttribute('y2', 320);
+                vLine.setAttribute('class', isCenter ? 'grid-axis' : 'grid-line');
+                simSvg.appendChild(vLine);
+
+                const hLine = document.createElementNS(svgNS, 'line');
+                hLine.setAttribute('x1', 0); hLine.setAttribute('y1', i);
+                hLine.setAttribute('x2', 320); hLine.setAttribute('y2', i);
+                hLine.setAttribute('class', isCenter ? 'grid-axis' : 'grid-line');
+                simSvg.appendChild(hLine);
+            }
+
+            // Trail polyline
+            const trail = document.createElementNS(svgNS, 'polyline');
+            trail.setAttribute('class', 'trail');
+            trail.setAttribute('id', 'trailPoly');
+            simSvg.appendChild(trail);
+
+            // Rover shape (Clean geometric marker)
+            const roverEl = document.createElementNS(svgNS, 'polygon');
+            roverEl.setAttribute('points', '0,-9 7,7 0,4 -7,7');
+            roverEl.setAttribute('class', 'rover');
+            roverEl.setAttribute('id', 'roverPoly');
+            simSvg.appendChild(roverEl);
+
+            resetRover();
+        }
+
+        function resetRover() {
+            rover = { x: CENTER.x, y: CENTER.y, heading: 0 };
+            trailPoints = [`${rover.x},${rover.y}`];
+            const tEl = document.getElementById('trailPoly');
+            if (tEl) tEl.setAttribute('points', trailPoints.join(' '));
+            updateRoverTransform();
+        }
+
+        document.getElementById('resetRoverBtn').addEventListener('click', () => {
+            resetRover();
+            logEntry('info', 'Rover reset to origin');
+        });
+
+        function updateRoverTransform() {
+            const el = document.getElementById('roverPoly');
+            if (!el) return;
+            el.setAttribute('transform', `translate(${rover.x} ${rover.y}) rotate(${rover.heading})`);
+            const normX = Math.round((rover.x - CENTER.x) / STEP_PX);
+            const normY = Math.round((CENTER.y - rover.y) / STEP_PX);
+            const normHdg = ((rover.heading % 360) + 360) % 360;
+            posLabel.textContent = `X: ${normX} | Y: ${normY} | ${normHdg}°`;
+        }
+
+        async function animateMove(steps, sign) {
+            const distancePx = steps * STEP_PX * sign;
+            const rad = rover.heading * Math.PI / 180;
+            const dx = Math.sin(rad) * distancePx;
+            const dy = -Math.cos(rad) * distancePx;
+            const startX = rover.x, startY = rover.y;
+            const targetX = rover.x + dx, targetY = rover.y + dy;
+            const duration = Math.min(500, 80 * steps + 80);
+            const startTime = performance.now();
+
+            await new Promise(resolve => {
+                function frame(now) {
+                    const t = Math.min(1, (now - startTime) / duration);
+                    rover.x = startX + (targetX - startX) * t;
+                    rover.y = startY + (targetY - startY) * t;
+                    updateRoverTransform();
+                    if (t < 1) {
+                        requestAnimationFrame(frame);
+                    } else {
+                        resolve();
+                    }
+                }
+                requestAnimationFrame(frame);
+            });
+            trailPoints.push(`${rover.x},${rover.y}`);
+            document.getElementById('trailPoly').setAttribute('points', trailPoints.join(' '));
+        }
+
+        async function animateTurn(degrees, sign) {
+            const startHeading = rover.heading;
+            const targetHeading = rover.heading + degrees * sign;
+            const duration = Math.min(350, Math.max(100, degrees * 2.2));
+            const startTime = performance.now();
+
+            await new Promise(resolve => {
+                function frame(now) {
+                    const t = Math.min(1, (now - startTime) / duration);
+                    rover.heading = startHeading + (targetHeading - startHeading) * t;
+                    updateRoverTransform();
+                    if (t < 1) {
+                        requestAnimationFrame(frame);
+                    } else {
+                        resolve();
+                    }
+                }
+                requestAnimationFrame(frame);
+            });
+        }
+
+        // ============================================================
+        // WEB SERIAL API CONNECTION (NEW)
+        // ============================================================
+        const connectBtBtn = document.getElementById('connectBtBtn');
+        connectBtBtn.addEventListener('click', async () => {
+            try {
+                const port = await navigator.serial.requestPort();
+                await port.open({ baudRate: 9600 });
+                const textEncoder = new TextEncoderStream();
+                textEncoder.readable.pipeTo(port.writable);
+                serialWriter = textEncoder.writable.getWriter();
+
+                logEntry('info', 'Successfully connected to Bluetooth RC Car!');
+                connectBtBtn.textContent = "Connected";
+                connectBtBtn.style.opacity = "0.7";
+            } catch (err) {
+                logEntry('err', 'Connection failed: ' + err.message, true);
+            }
+        });
+
+        // ============================================================
+        // COMPILER PIPELINE RUNNER
+        // ============================================================
+        async function runCompiler() {
+            compileBtn.disabled = true;
+            resetPhases();
+            resetRover();
+            logEl.innerHTML = '';
+
+            if (globalStatus) {
+                globalStatus.textContent = 'Compiling';
+                globalStatus.className = 'badge badge-active';
+            }
+            pipelineStatus.textContent = 'Busy';
+            pipelineStatus.className = 'badge badge-active';
+
+            const src = editor.value.trim();
+            if (!src) {
+                logEntry('err', 'Source code is empty. Add commands to compile.', true);
+                if (globalStatus) {
+                    globalStatus.textContent = 'Error';
+                    globalStatus.className = 'badge badge-error';
+                }
+                pipelineStatus.textContent = 'Failed';
+                pipelineStatus.className = 'badge badge-error';
+                compileBtn.disabled = false;
+                return;
+            }
+
+            // ---------- PHASE 1: LEX ----------
+            setPhaseState('lex', 'active');
+            if (progressBar) progressBar.style.width = '25%';
+            logEntry('lex', 'Tokenizing source code...');
+            await sleep(180);
+
+            let tokens;
+            try {
+                tokens = lex(src);
+                const tokenSummary = tokens.map(t => t.type === 'EOF' ? 'EOF' : `${t.type}(${t.value})`).join(' ');
+                setPhaseState('lex', 'done', `${tokens.length - 1} tokens: ${tokenSummary}`);
+                logEntry('lex', `Generated ${tokens.length - 1} tokens successfully.`);
+            } catch (e) {
+                setPhaseState('lex', 'error', e.message);
+                logEntry('err', e.message, true);
+                finishWithError('Lexical Error');
+                return;
+            }
+
+            // ---------- PHASE 2: PARSE ----------
+            setPhaseState('parse', 'active');
+            if (progressBar) progressBar.style.width = '50%';
+            logEntry('parse', 'Constructing Abstract Syntax Tree...');
+            await sleep(180);
+
+            let ast;
+            try {
+                ast = parse(tokens);
+                const astSummary = JSON.stringify(ast, null, 1);
+                setPhaseState('parse', 'done', `AST root statements: ${ast.length}\n${astSummary}`);
+                logEntry('parse', `Parsed ${ast.length} top-level AST node(s).`);
+            } catch (e) {
+                setPhaseState('parse', 'error', e.message);
+                logEntry('err', e.message, true);
+                finishWithError('Syntax Error');
+                return;
+            }
+
+            // ---------- PHASE 3: CODEGEN ----------
+            setPhaseState('codegen', 'active');
+            if (progressBar) progressBar.style.width = '75%';
+            logEntry('codegen', 'Generating low-level opcode instructions...');
+            await sleep(180);
+
+            let bytecode;
+            try {
+                bytecode = codegen(ast);
+                setPhaseState('codegen', 'done', `Bytecode [${bytecode.length}]: ${bytecode.join(', ')}`);
+                logEntry('codegen', `Generated opcodes: [ ${bytecode.join(', ')} ]`);
+            } catch (e) {
+                setPhaseState('codegen', 'error', e.message);
+                logEntry('err', e.message, true);
+                finishWithError('Codegen Error');
+                return;
+            }
+
+            // ---------- PHASE 4: EXECUTION / TX ----------
+            setPhaseState('exec', 'active');
+            if (progressBar) progressBar.style.width = '100%';
+            if (globalStatus) {
+                globalStatus.textContent = 'Running';
+            }
+            pipelineStatus.textContent = 'Executing';
+            logEntry('tx', `Transmitting ${bytecode.length} instructions to rover...`);
+
+            for (let i = 0; i < bytecode.length; i++) {
+                const instr = bytecode[i];
+                const cmd = instr[0];
+                const val = parseInt(instr.slice(1), 10);
+
+                logEntry('tx', `[Step ${i + 1}/${bytecode.length}] SEND -> ${instr}`);
+
+                // NEW: Physically transmit the command to the Arduino via Bluetooth Web Serial
+                if (serialWriter) {
+                    await serialWriter.write(instr + '\n');
+                }
+
+                // Simulate on screen
+                if (cmd === 'F') await animateMove(val, 1);
+                else if (cmd === 'B') await animateMove(val, -1);
+                else if (cmd === 'L') await animateTurn(val, -1);
+                else if (cmd === 'R') await animateTurn(val, 1);
+
+                await sleep(40);
+                logEntry('rx', `ACK <- ${instr} OK`);
+            }
+
+            setPhaseState('exec', 'done', `Completed ${bytecode.length} steps.`);
+            logEntry('info', 'Execution completed successfully.');
+
+            if (globalStatus) {
+                globalStatus.textContent = 'Success';
+                globalStatus.className = 'badge badge-done';
+            }
+            pipelineStatus.textContent = 'Complete';
+            pipelineStatus.className = 'badge badge-done';
+            compileBtn.disabled = false;
+        }
+
+        function finishWithError(reason) {
+            if (globalStatus) {
+                globalStatus.textContent = 'Error';
+                globalStatus.className = 'badge badge-error';
+            }
+            pipelineStatus.textContent = 'Failed';
+            pipelineStatus.className = 'badge badge-error';
+            compileBtn.disabled = false;
+        }
+
+        compileBtn.addEventListener('click', runCompiler);
+        initGrid();
+    </script>
+</body>
+
+</html>
